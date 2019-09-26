@@ -1,0 +1,8 @@
+# adjust the path of the script and conf file if they are installed
+# other locations.
+# run journalctl to find logs related to the script.
+ACTION=="add|remove", SUBSYSTEM=="block", KERNEL=="md[0-9]*", RUN+="/usr/bin/ingest-device.sh dispatch /opt/dms/conf/ingest.conf > /opt/dms/logs/ingest-trigger.log 2>&1"
+
+ACTION=="add", KERNEL=="sd[a-z]*", ENV{DEVTYPE}=="partition", ENV{ID_BUS}=="usb", RUN+="/usr/bin/ingest-usb.sh dispatch /opt/dms/conf/ingest.conf  > /opt/dms/logs/ingest-trigger-usb.log 2>&1"
+
+

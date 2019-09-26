@@ -1,0 +1,11 @@
+{"index":{"_index":"navigation","_type":"category", "_id": "ingestion"}}
+{"category": "Ingestion", "navigation": "dashboard", "path": "DMS-Ingestion-Dashboard", "refresh": "refreshInterval:(display:'5%20seconds',pause:!f,section:1,value:5000)", "time_range": "from:now-1d,to:now", "order": 1 }
+
+{"index":{"_index":"navigation","_type":"category", "_id": "cluster"}}
+{"category": "Cluster", "navigation": "dashboard", "path": "DMS-Cluster-Dashboard", "refresh": "refreshInterval:(display:Off,pause:!f,value:0)", "time_range": "from:now-1y,to:now", "order": 2 }
+
+{"index":{"_index":"navigation","_type":"category", "_id": "drive"}}
+{"category": "Drive", "navigation": "dashboard", "path": "DMS-Drive-Dashboard", "refresh": "refreshInterval:(display:Off,pause:!f,value:0)", "time_range": "from:now-1y,to:now", "order": 3}
+
+{"index":{"_index":"navigation","_type":"category", "_id": "error"}}
+{"category": "Error", "navigation": "discover", "path": "type-journal-level-error", "refresh": "refreshInterval:(display:'30%20seconds',pause:!f,section:1,value:30000)", "time_range": "time:(from:now-1d,to:now)", "order": 4 }

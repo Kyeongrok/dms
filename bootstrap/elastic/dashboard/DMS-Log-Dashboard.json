@@ -1,0 +1,21 @@
+  {
+      "title": "DMS-Log-Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"columns\":[\"action\",\"log_level\",\"device\",\"message\"],\"id\":\"type-is-journal\",\"panelIndex\":1,\"row\":3,\"size_x\":12,\"size_y\":5,\"sort\":[\"_score\",\"desc\"],\"type\":\"search\"},{\"size_x\":12,\"size_y\":2,\"panelIndex\":2,\"type\":\"visualization\",\"id\":\"Journal-Over-Time\",\"col\":1,\"row\":1}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-1h",
+      "refreshInterval": {
+        "display": "30 seconds",
+        "pause": true,
+        "section": 1,
+        "value": 30000
+      },
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"match_all\":{}}}],\"highlightAll\":true,\"version\":true}"
+      }
+  }

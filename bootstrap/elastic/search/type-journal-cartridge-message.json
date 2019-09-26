@@ -1,0 +1,19 @@
+  {
+      "title": "type-journal-cartridge-message",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "cartridge_id",
+        "log_level",
+        "ingest_station",
+        "message"
+      ],
+      "sort": [
+        "updated_at",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\n  \"index\": \"dms-z1-log-v1\",\n  \"filter\": [],\n  \"highlight\": {\n    \"pre_tags\": [\n      \"@kibana-highlighted-field@\"\n    ],\n    \"post_tags\": [\n      \"@/kibana-highlighted-field@\"\n    ],\n    \"fields\": {\n      \"*\": {}\n    },\n    \"require_field_match\": false,\n    \"fragment_size\": 2147483647\n  },\n  \"query\": {\n    \"query_string\": {\n      \"query\": \"_type:journal\",\n      \"analyze_wildcard\": true\n    }\n  }\n}"
+      }
+  }

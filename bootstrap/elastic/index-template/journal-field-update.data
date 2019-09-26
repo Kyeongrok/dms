@@ -1,0 +1,25 @@
+{
+    "title" : "dms-z1-log-v1-*",
+    "timeFieldName": "updated_at",
+    "fields" : "[
+        {\"name\":\"action\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"context\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"device\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"ingest_station\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"log_level\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"message\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":true,\"searchable\":true,\"aggregatable\":false},
+        {\"name\":\"project_name\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"reader_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"reader_port\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"tags\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":true,\"searchable\":true,\"aggregatable\":false},
+        {\"name\":\"updated_at\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"cartridge_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true}
+    ]",
+
+    "fieldFormatMap" : "{
+        \"log_level\":{\"id\":\"color\",\"params\":{\"fieldType\":\"string\",\"colors\":[{\"range\":\"-Infinity:Infinity\",\"regex\":\"^ERROR$\",\"text\":\"#000000\",\"background\":\"#FF0000\"}
+        ]}}
+    }"
+}

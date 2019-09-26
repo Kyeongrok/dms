@@ -1,0 +1,21 @@
+  {
+      "title": "DMS Drive Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Drive-Stat-By-Car\",\"panelIndex\":1,\"row\":1,\"size_x\":6,\"size_y\":4,\"type\":\"visualization\"},{\"col\":7,\"id\":\"Drive-Count-By-Cluster-Over-Time\",\"panelIndex\":2,\"row\":1,\"size_x\":6,\"size_y\":4,\"type\":\"visualization\"},{\"col\":7,\"id\":\"Drive-Size-By-Cluster-Over-Time\",\"panelIndex\":3,\"row\":5,\"size_x\":6,\"size_y\":3,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Ingest-Rate-By-Station-Over-Time\",\"panelIndex\":4,\"row\":5,\"size_x\":6,\"size_y\":3,\"type\":\"visualization\"}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{\"P-1\":{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":null,\"direction\":null}}}}}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-1y",
+      "refreshInterval": {
+        "display": "30 seconds",
+        "pause": true,
+        "section": 1,
+        "value": 30000
+      },
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}],\"highlightAll\":true,\"version\":true}"
+      }
+  }

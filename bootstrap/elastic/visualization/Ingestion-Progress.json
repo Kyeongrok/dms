@@ -1,0 +1,10 @@
+ {
+  "title": "Ingestion Progress",
+  "visState": "{\"aggs\":[{\"enabled\":true,\"id\":\"1\",\"params\":{\"customLabel\":\"Updated Since\",\"field\":\"updated_since\"},\"schema\":\"metric\",\"type\":\"max\"},{\"enabled\":true,\"id\":\"2\",\"params\":{\"customLabel\":\"Station\",\"field\":\"hostname\",\"order\":\"asc\",\"orderBy\":\"1\",\"size\":50},\"schema\":\"bucket\",\"type\":\"terms\"},{\"enabled\":true,\"id\":\"3\",\"params\":{\"customLabel\":\"Location\",\"field\":\"port\",\"order\":\"asc\",\"orderBy\":\"1\",\"size\":5},\"schema\":\"bucket\",\"type\":\"terms\"},{\"enabled\":true,\"id\":\"4\",\"params\":{\"customLabel\":\"Device\",\"field\":\"device\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":5},\"schema\":\"bucket\",\"type\":\"terms\"},{\"enabled\":true,\"id\":\"5\",\"params\":{\"customLabel\":\"Mount\",\"field\":\"mount\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":5},\"schema\":\"bucket\",\"type\":\"terms\"},{\"enabled\":true,\"id\":\"6\",\"params\":{\"customLabel\":\"Status\",\"field\":\"status\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":5},\"schema\":\"bucket\",\"type\":\"terms\"},{\"enabled\":true,\"id\":\"7\",\"params\":{\"customLabel\":\"Ingest State\",\"field\":\"ingest_state\",\"order\":\"desc\",\"orderBy\":\"1\",\"size\":5},\"schema\":\"bucket\",\"type\":\"terms\"}],\"listeners\":{},\"params\":{\"perPage\":10,\"showMeticsAtAllLevels\":false,\"showPartialRows\":false,\"showTotal\":false,\"sort\":{\"columnIndex\":null,\"direction\":null},\"totalFunc\":\"sum\",\"type\":\"table\"},\"title\":\"Ingestion Progress\",\"type\":\"table\"}",
+  "uiStateJSON": "{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":7,\"direction\":\"desc\"}}}}",
+  "description": "",
+  "version": 1,
+  "kibanaSavedObjectMeta": {
+    "searchSourceJSON": "{\"index\":\"dms-configuration-v1\",\"query\":{\"match_all\":{}},\"filter\":[]}"
+ }
+}

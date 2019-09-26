@@ -1,0 +1,10 @@
+  {
+      "title": "Cartridge Tracking",
+      "visState": "{\"title\":\"Cartridge Tracking\",\"type\":\"table\",\"params\":{\"perPage\":10,\"showMeticsAtAllLevels\":false,\"showPartialRows\":false,\"showTotal\":false,\"sort\":{\"columnIndex\":null,\"direction\":null},\"totalFunc\":\"sum\",\"type\":\"table\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"updated_since\",\"customLabel\":\"Updated Since\"}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"cartridge_id\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Cartridge ID\"}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"workflow_type\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Type\"}},{\"id\":\"4\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"ingest_station\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Station\"}},{\"id\":\"5\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"slot\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Slot\"}},{\"id\":\"6\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"ingest_state\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"State\"}},{\"id\":\"7\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"cartridge_usage\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Usage  (GB)\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":null,\"direction\":null}}}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"dms-configuration-v1\",\"query\":{\"match_all\":{}},\"filter\":[]}"
+      }
+  }

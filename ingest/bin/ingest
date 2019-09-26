@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+import logging.config
+import os
+import signal
+import sys
+
+import click
+import psutil
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
+
+import ingest
+from ingest.config import setup_logging, ConfigFileProcessor
+from ingest.regular.manager import RegularIngestManager
+from ingest.sensor.manager import SensorManager
+
+urllib3.disable_warnings(InsecureRequestWarning)
+
+log = logging.getLogger('ingest.main')
+
+
+@click.command()
+@click.option('--config-file', '-c',
+              help='Path to the configuration file containing Elasticsearch connection details',
+              type=click.Path(exists=True),
+              required=True)
+@click.option('--mount-path', '-m',
+              help='Path to the directory where the cartridge is mounted',
+              type=click.Path(),
+              required=True)
+@click.option('--reader-id', '-r',
+              help='ID of the reader to update the dashboard. '
+                   'If not provided, the dashboard will not be updated within this program',
+              type=click.STRING,
+              required=False)
+@click.option('--cartridge-id', '-cr',
+              help='ID of the cartridge to update the dashboard. '
+                   'If not provided, the dashboard will not be updated within this program',
+              type=click.STRING,
+              required=False)
+@click.version_option(version=ingest.__version__)
+def cli(config_file, mount_path, reader_id, cartridge_id):
+    log.info("Ingest script version %s" % (ingest.__version__,))
+
+    ConfigFileProcessor.config_files.append(config_file)
+    config = ConfigFileProcessor.read_config()
+
+    if config['sensor_mode']['enabled']:
+        log.info('Running in sensor mode')
+
+    log.info('Using configuration: %s' % (config,))
+
+    def signal_handler(signal, frame):
+        log.warning('SIGINT/SIGTERM signal received')
+        log.warning('Killing all children process and exiting...')
+        pid = os.getpid()
+        parent = psutil.Process(pid)
+        for child in parent.children(recursive=True):
+            child.kill()
+        sys.exit(130)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    try:
+        log.info('Creating ingest manager...')
+        if config['sensor_mode']['enabled']:
+            manager = SensorManager(config, mount_path, reader_id, cartridge_id)
+        else:
+            manager = RegularIngestManager(config, mount_path, reader_id, cartridge_id)
+        manager.run()
+    except Exception as e:
+        log.error(e)
+        sys.exit(1)
+
+    log.info('Exiting')
+    sys.exit(0)
+
+
+if __name__ == '__main__':
+    setup_logging()
+    cli()

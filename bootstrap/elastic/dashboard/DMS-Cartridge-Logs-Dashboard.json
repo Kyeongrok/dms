@@ -1,0 +1,13 @@
+  {
+      "title": "DMS Cartridge Logs",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[\n  {\n    \"size_x\": 6,\n    \"size_y\": 3,\n    \"panelIndex\": 1,\n    \"type\": \"search\",\n    \"id\": \"type-journal-cartridge-message\",\n    \"col\": 1,\n    \"row\": 1,\n    \"columns\": [\n      \"cartridge_id\",\n      \"log_level\",\n      \"ingest_station\",\n      \"device\",\n      \"message\"\n    ],\n    \"sort\": [\n      \"updated_at\",\n      \"desc\"\n    ]\n  }\n]",
+      "optionsJSON": "{\n  \"darkTheme\": false\n}",
+      "uiStateJSON": "{}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\n  \"highlightAll\": true,\n  \"version\": true\n}"
+      }
+  }

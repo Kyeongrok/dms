@@ -1,0 +1,27 @@
+{
+    "template" : "navigation",
+    "mappings": {
+        "category": {
+            "properties": {
+                "category": {
+                    "type": "keyword"
+                },
+                "navigation": {
+                    "type": "keyword"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "path": {
+                    "type": "keyword"
+                },
+                "refresh": {
+                    "type": "keyword"
+                },
+                "time_range": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}

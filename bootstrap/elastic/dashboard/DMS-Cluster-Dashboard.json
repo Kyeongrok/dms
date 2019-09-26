@@ -1,0 +1,21 @@
+  {
+      "title": "DMS Cluster Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":7,\"id\":\"Drive-Size-By-Cluster\",\"panelIndex\":3,\"row\":1,\"size_x\":6,\"size_y\":3,\"type\":\"visualization\"},{\"col\":7,\"id\":\"Drive-Count-By-Cluster\",\"panelIndex\":4,\"row\":4,\"size_x\":6,\"size_y\":4,\"type\":\"visualization\"},{\"id\":\"Drive-Size-By-Cluster-Over-Time\",\"type\":\"visualization\",\"panelIndex\":5,\"size_x\":6,\"size_y\":3,\"col\":1,\"row\":1},{\"size_x\":6,\"size_y\":4,\"panelIndex\":6,\"type\":\"visualization\",\"id\":\"Ingest-Rate-By-Cluster-Over-Time\",\"col\":1,\"row\":4}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{\"P-4\":{\"vis\":{\"legendOpen\":false}}}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-1y",
+      "refreshInterval": {
+        "display": "60 seconds",
+        "pause": false,
+        "section": 1,
+        "value": 60000
+      },
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}],\"highlightAll\":true,\"version\":true}"
+      }
+  }

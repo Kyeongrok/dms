@@ -1,0 +1,78 @@
+{
+    "title" : "dms-configuration-*",
+    "fields" : "[
+        {\"name\":\"perm_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"output_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"useroutput_mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":false,\"aggregatable\":false},
+        {\"name\":\"resim_mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"available\",\"type\":\"boolean\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"nfs_host\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"output_mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"raw_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"resim_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"cluster_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"updated_at\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"perm_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"output_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"useroutput_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"useroutput_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":false,\"aggregatable\":false},
+        {\"name\":\"resim_mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":false,\"searchable\":true,\"aggregatable\":false},
+        {\"name\":\"raw_mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"weight\",\"type\":\"number\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"resim_mout\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":false,\"aggregatable\":false},
+        {\"name\":\"smb_host\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"useroutput_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":false,\"aggregatable\":false},
+        {\"name\":\"perm_mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"resim_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"_source\",\"type\":\"_source\",\"count\":0,\"scripted\":false,\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":false,\"aggregatable\":false},
+        {\"name\":\"raw_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"tags.keyword\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"tags\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":false,\"searchable\":true,\"aggregatable\":false},
+        {\"name\":\"device\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"hostname\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"mount\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"port\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"ingest_state\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"message\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":false,\"searchable\":true,\"aggregatable\":false},
+        {\"name\":\"message.keyword\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"reader_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"status\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"updated_since\",\"type\":\"number\",\"count\":1,\"scripted\":true,\"script\":\"(System.currentTimeMillis() - doc['updated_at'].date.getMillis())/1000\",\"lang\":\"painless\",\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"mount_state\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"cartridge_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"cartridge_id.keyword\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"workflow_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"slot\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"usage\",\"type\":\"number\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"cartridge_usage\",\"type\":\"number\",\"count\":1,\"scripted\":true,\"script\":\"if (doc['usage'].value == -1) { return '--'; } return doc['usage']\",\"lang\":\"painless\",\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true}
+    ]",
+
+    "fieldFormatMap" : "{
+        \"output_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+        \"perm_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+        \"raw_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+        \"resim_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+        \"useroutput_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+
+        \"updated_since\":{\"id\":\"duration\"},
+
+        \"message.keyword\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"/app/kibana#/discover/type-journal-level-error?_g=(refreshInterval:(display:'30%20seconds',pause:!f,section:1,value:30000),time:(from:now-1h,to:now))\",\"labelTemplate\":\"{{ value }}\"}},
+
+        \"cartridge_id\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"/app/kibana#/dashboard/DMS-Cartridge-Logs?_g=(refreshInterval:(display:'30%20seconds',pause:!t,section:1,value:30000),time:(from:now-7d,mode:quick,to:now))&_a=(description:'',filters:!(),options:(darkTheme:!f),panels:!((col:1,columns:!(cartridge_id,log_level,ingest_station,device,message),id:type-journal-cartridge-message,panelIndex:1,row:1,size_x:6,size_y:3,sort:!(updated_at,desc),type:search)),query:(query_string:(query:'cartridge_id:%22{{value}}%22')),timeRestore:!f,title:'DMS%20Cartridge%20Logs',uiState:(),viewMode:view)\",\"labelTemplate\":\"{{ value }}\"}},
+
+        \"status\":{\"id\":\"color\",\"params\":{\"fieldType\":\"string\",\"colors\":[
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^inactive$\",\"text\":\"#000000\",\"background\":\"#FF0000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^clean$\",\"text\":\"#000000\",\"background\":\"#008000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^active$\",\"text\":\"#000000\",\"background\":\"#008000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^empty$\",\"text\":\"#000000\",\"background\":\"#FFFFFF\"}
+        ]}},
+        \"ingest_state\":{\"id\":\"color\",\"params\":{\"fieldType\":\"string\",\"colors\":[
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^processed$\",\"text\":\"#000000\",\"background\":\"#009000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^failed$\",\"text\":\"#000000\",\"background\":\"#FF0000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^processing$\",\"text\":\"#000000\",\"background\":\"#20B2AA\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^idle$\",\"text\":\"#000000\",\"background\":\"#FFFFFF\"}
+        ]}}
+    }"
+}
+

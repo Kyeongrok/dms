@@ -1,0 +1,21 @@
+  {
+      "title": "DMS Ingestion Dashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"col\":1,\"id\":\"Ingestion-Progress\",\"panelIndex\":1,\"row\":3,\"size_x\":12,\"size_y\":9,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Active-Ingestion\",\"panelIndex\":2,\"row\":1,\"size_x\":12,\"size_y\":2,\"type\":\"visualization\"}]",
+      "optionsJSON": "{\"darkTheme\":false}",
+      "uiStateJSON": "{\"P-1\":{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":0,\"direction\":\"asc\"}}}},\"P-2\":{\"vis\":{\"legendOpen\":true}}}",
+      "version": 1,
+      "timeRestore": true,
+      "timeTo": "now",
+      "timeFrom": "now-1d",
+      "refreshInterval": {
+        "display": "5 seconds",
+        "pause": false,
+        "section": 1,
+        "value": 5000
+      },
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}],\"highlightAll\":true,\"version\":true}"
+      }
+  }

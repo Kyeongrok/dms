@@ -1,0 +1,1 @@
+ACTION=="add|remove", SUBSYSTEM=="block", KERNEL=="sd[a-z]", RUN+="/usr/local/bin/as_worker.sh dispatch >>/tmp/logga.log 2>&1"

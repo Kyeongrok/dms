@@ -1,0 +1,10 @@
+  {
+      "title": "Navigation",
+      "visState": "{\"title\":\"Navigation\",\"type\":\"markdown\",\"params\":{\"markdown\":\"- [Main](#/dashboard/DMS-Dashboard)\\n\\n- [Ingestion](#/dashboard/DMS-Ingestion-Dashboard)\\n\\n- [USB Ingestion](#/dashboard/DMS-USBIngestion-Dashboard)\\n\\n- [Cluster](#/dashboard/DMS-Cluster-Dashboard)\\n\\n- [Drive](#/dashboard/DMS-Drive-Dashboard)\\n\\n- [Logs](#/dashboard/DMS-Log-Dashboard)\\n\\n- [Cartridge Tracking](#/dashboard/DMS-Cartridge-Tracking-Dashboard)\",\"type\":\"markdown\"},\"aggs\":[],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
+      }
+  }

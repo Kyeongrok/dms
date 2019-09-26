@@ -1,0 +1,44 @@
+{
+    "title" : "dms-z1-resim-*",
+    "timeFieldName": "updated_at",
+    "fields" : "[
+        {\"name\":\"car_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"cluster_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"created_at\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"drive_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"ended_at\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"nfs_host\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"output_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"output_path\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"output_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"perm_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"perm_path\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"perm_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"project_name\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"resim_export\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"resim_path\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"resim_share\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"segment_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"smb_host\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"started_at\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"state\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"tags\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":true,\"doc_values\":true,\"searchable\":true,\"aggregatable\":false},
+        {\"name\":\"updated_at\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"updated_since\",\"type\":\"number\",\"count\":1,\"scripted\":true,\"script\":\"(System.currentTimeMillis() - doc['updated_at'].date.getMillis())/1000\",\"lang\":\"painless\",\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true}
+    ]",
+
+    "fieldFormatMap" : "{
+        \"output_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+        \"perm_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+        \"resim_share\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{rawValue}}\",\"labelTemplate\":\"{{ value }}\"}},
+
+        \"updated_since\":{\"id\":\"duration\"},
+        \"state\":{\"id\":\"color\",\"params\":{\"fieldType\":\"string\",\"colors\":[
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^completed$\",\"text\":\"#000000\",\"background\":\"#009000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^failed$\",\"text\":\"#000000\",\"background\":\"#FF0000\"},
+            {\"range\":\"-Infinity:Infinity\",\"regex\":\"^deleted$\",\"text\":\"#000000\",\"background\":\"#FFFF00\"}
+        ]}}
+    }"
+}
+

@@ -1,0 +1,818 @@
+#!/usr/bin/python3 -tt
+
+import configparser
+import hashlib
+import logging
+import os
+import pprint
+import re
+import subprocess
+import sys
+from datetime import datetime
+from datetime import timezone
+from filecmp import dircmp
+
+import click
+
+from dmsclient.client import DMSClient
+from dmsclient.exceptions import DMSClientException
+from dmsclient.mappings import MAPPINGS
+from dmsclient.models.cartridge import Cartridge
+from dmsclient.models.cluster import Cluster
+from dmsclient.models.drive import Drive
+from dmsclient.models.journal import Journal
+from dmsclient.models.reader import Reader
+from dmsclient.models.usbreader import USBReader
+
+
+class Config(object):
+    def __init__(self, config_file, config):
+        self.config_file = config_file
+        self.config = config
+
+
+def get_dmsclient(config):
+    es_endpoint = config['elasticsearch']['endpoint']
+    es_username = config['elasticsearch']['user']
+    es_password = config['elasticsearch']['password']
+    return DMSClient(es_endpoint=es_endpoint,
+                     es_user=es_username,
+                     es_password=es_password,
+                     create_templates=True,
+                     verify_templates=True,
+                     initial_sync=False)
+
+
+def get_utc_time(time_str):
+    local_time = datetime.strptime(time_str, "%Y%m%dT%H%M%S")
+    utc_time = local_time.replace(tzinfo=timezone.utc)
+    return utc_time.strftime("%Y-%m-%dT%H:%M:%S.%f")
+
+
+def run_script(script, stdin=None):
+    """Returns (stdout, stderr), raises error on non-zero return code"""
+    import subprocess
+    # Note: by using a list here (['bash', ...]) you avoid quoting issues, as the 
+    # arguments are passed in exactly this order (spaces, quotes, and newlines won't
+    # cause problems):
+    # proc = subprocess.Popen(['bash', '-c', script],
+    #    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(['bash', '-c', script])
+    stdout, stderr = proc.communicate()
+    return stdout, stderr, proc.returncode
+
+
+@click.group()
+@click.option('--config-file', '-c', default='/opt/dms/conf/ingest.conf',
+              help='Path to the configuration file containing ingest configuration',
+              type=click.Path(exists=True))
+@click.pass_context
+def cli(ctx, config_file):
+    """Utility to manage configurations of Data Management System"""
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    ctx.obj = Config(config_file, config)
+
+
+@cli.command()
+@click.pass_obj
+@click.option('--enable/--disable', is_flag=True, default=True, help="Availability of Isilon cluster, default true")
+@click.option('--export-prefix', envvar='EXPORT_PREFIX', default='/ifs/z1',
+              help="Prefix of Isilon exports, env EXPORT_PREFIX, default to /ifs/z1")
+@click.option('--cluster-id', required=True, help="ID of the cluster configuration in Elasticsearch, e.g., islp00001")
+@click.option('--nfs-host', envvar='NFS_HOST',
+              help="DNS name or IP of the NFS export of the Isilon cluster, env NFS_HOST")
+@click.option('--mount-prefix', envvar='MOUNT_PREFIX', default='/volvo/z1',
+              help="Prefix of mount point, env MOUNT_POINT, default to /volvo/z1")
+@click.option('--smb-host', envvar='SMB_HOST',
+              help="DNS name or IP of the SMB share on the Isilon cluster, env NFS_HOST")
+@click.option('--weight', default=1, type=click.INT, help="Weight of the Isilon cluster, default to 1")
+def cluster_create(ctx, enable, export_prefix, cluster_id, nfs_host, mount_prefix, smb_host, weight):
+    """Create a cluster configuration"""
+    client = get_dmsclient(ctx.config)
+    raw = 'raw'
+    perm = 'perm'
+    resim = 'resim'
+    output = 'output'
+    useroutput = 'useroutput'
+
+    cluster_name = cluster_id
+    raw_export = os.path.join(export_prefix, cluster_name, raw)
+    perm_export = os.path.join(export_prefix, cluster_name, perm)
+    resim_export = os.path.join(export_prefix, cluster_name, resim)
+    output_export = os.path.join(export_prefix, cluster_name, output)
+    useroutput_export = os.path.join(export_prefix, cluster_name, useroutput)
+    # TBD: smb shares as options as the path may change.
+    raw_share = r"\\" + str(smb_host) + "\\" + raw
+    perm_share = r"\\" + str(smb_host) + "\\" + perm
+    resim_share = r"\\" + str(smb_host) + "\\" + resim
+    output_share = r"\\" + str(smb_host) + "\\" + output
+    useroutput_share = r"\\" + str(smb_host) + "\\" + useroutput
+
+    cluster = Cluster(cluster_id=cluster_id,
+                      weight=weight,
+                      available=enable,
+                      updated_at=datetime.now(),
+                      raw_export=raw_export,
+                      perm_export=perm_export,
+                      resim_export=resim_export,
+                      output_export=output_export,
+                      useroutput_export=useroutput_export,
+                      raw_mount=os.path.join(mount_prefix, cluster_name, raw),
+                      perm_mount=os.path.join(mount_prefix, cluster_name, perm),
+                      resim_mount=os.path.join(mount_prefix, cluster_name, resim),
+                      output_mount=os.path.join(mount_prefix, cluster_name, output),
+                      useroutput_mount=os.path.join(mount_prefix, cluster_name, useroutput),
+                      raw_share=raw_share,
+                      perm_share=perm_share,
+                      resim_share=resim_share,
+                      output_share=output_share,
+                      useroutput_share=useroutput_share,
+                      nfs_host=nfs_host,
+                      smb_host=smb_host
+                      )
+
+    client.clusters.create(cluster)
+    res = client.clusters.get(cluster.cluster_id)
+    pprint.pprint(res.to_dict())
+    # dump cluster as json.  updated_at not json serializable
+    # print(json.dumps(res.to_dict()))
+
+
+@cli.command()
+@click.pass_obj
+def cluster_list(ctx):
+    """List all cluster configurations"""
+    client = get_dmsclient(ctx.config)
+    for c in client.clusters.get_all():
+        pprint.pprint(c.to_dict())
+        # TBD json output and/or nice formatted
+
+
+@cli.command()
+@click.pass_obj
+@click.option('--cluster-id', required=True, help="ID of the cluster configuration in Elasticsearch, e.g., islp00001")
+def cluster_delete(ctx, cluster_id):
+    """Delete a cluster configuration"""
+    client = get_dmsclient(ctx.config)
+    client.clusters.delete(cluster_id)
+
+
+@cli.command()
+@click.pass_obj
+def cluster_delete_all(ctx):
+    """Delete all cluster configurations"""
+    client = get_dmsclient(ctx.config)
+    client.clusters.delete_all()
+
+
+@cli.command()
+@click.pass_obj
+@click.option('--cluster-id', required=True, help="ID of the cluster configuration in Elasticsearch, e.g., islp00001")
+@click.option('--enable/--disable', default=None, help="Availability of Isilon cluster")
+@click.option('--weight', type=click.INT, help="Weight of the Isilon cluster, default to 1")
+def cluster_update(ctx, cluster_id, enable, weight):
+    """Update a cluster configuration"""
+    client = get_dmsclient(ctx.config)
+    try:
+        if enable is not None:
+            if enable:
+                client.clusters.enable(cluster_id)
+            else:
+                client.clusters.disable(cluster_id)
+
+        if weight is not None:
+            client.clusters.set_weight(cluster_id, weight)
+
+        pprint.pprint(client.clusters.get(cluster_id).to_dict())
+
+    except DMSClientException as e:
+        # TBD: better logging
+        pass
+
+
+# Ingest reader command
+@cli.command()
+@click.pass_obj
+@click.option('--reader-id', help="The ID of the data cartridge reader on ingest station")
+@click.option('--host', help="The hostname of ingest station")
+@click.option('--device', help="The device name corresponding to the reader")
+@click.option('--status', default='empty', type=click.Choice(['empty', 'active', 'inactive']),
+              help="The status of the reader")
+@click.option('--ingest-state', default='idle', type=click.Choice(['idle', 'processing', 'processed', 'failed']),
+              help="The ingest state")
+@click.option('--mount', default='', help="The mount directory of the device")
+@click.option('--port', default='', help="The SAS port")
+@click.option('--message', default='', help="Message")
+def reader_create(ctx, reader_id, host, device, status, ingest_state, mount, port, message):
+    """Create a cartridge reader"""
+    client = get_dmsclient(ctx.config)
+    try:
+        try:
+            client.readers.delete(reader_id)
+        except DMSClientException:
+            # ignore if it does not exist
+            pass
+
+        reader = Reader(reader_id=reader_id,
+                        hostname=host,
+                        status=status,
+                        device=device,
+                        mount=mount,
+                        port=port,
+                        ingest_state=ingest_state,
+                        message=message)
+
+        client.readers.create(reader)
+
+        res = client.readers.get(reader_id)
+        pprint.pprint(res.to_dict())
+    except DMSClientException:
+        sys.exit(1)
+
+
+# list readers
+@cli.command()
+@click.pass_obj
+def reader_list(ctx):
+    """List all cartridge readers"""
+    fields = {'_type': 'reader'}
+    client = get_dmsclient(ctx.config)
+    for r in client.readers.find_by_fields(**fields):
+        pprint.pprint(r.to_dict())
+
+
+# update reader status
+@cli.command()
+@click.pass_obj
+@click.option('--reader-id', required=True, help="Reader id of the data cartridge reader on ingest station")
+@click.option('--status', type=click.Choice(['empty', 'active', 'inactive']))
+@click.option('--ingest-state', type=click.Choice(['idle', 'processing', 'processed', 'failed']))
+@click.option('--message', type=click.STRING)
+def reader_update(ctx, reader_id, status, ingest_state, message):
+    """ Update a cartridge reader: status, ingest_state, message"""
+
+    try:
+        client = get_dmsclient(ctx.config)
+        if status is not None:
+            client.readers.set_status(reader_id, status)
+
+        if ingest_state is not None:
+            client.readers.set_ingest_state(reader_id, ingest_state)
+
+        if message is not None:
+            client.readers.set_message(reader_id, message)
+
+        reader = client.readers.get(reader_id)
+        if reader.status == 'empty' and reader.ingest_state == 'processed' and ingest_state is None:
+            client.readers.set_ingest_state(reader_id, 'idle')
+
+        reader = client.readers.get(reader_id)
+        pprint.pprint(reader.to_dict())
+    except DMSClientException as e:
+        print(str(e.message))
+        sys.exit(1)
+
+
+# delete reader
+@cli.command()
+@click.pass_obj
+@click.option('--reader-id', required=True, help="Reader id of the data cartridge reader on ingest station")
+def reader_delete(ctx, reader_id):
+    """Delete a cartridge reader"""
+
+    client = get_dmsclient(ctx.config)
+    client.readers.delete(reader_id)
+
+@cli.command()
+@click.pass_obj
+@click.option('--reader-id', help="The ID of the USB reader on ingest station")
+@click.option('--host', help="The hostname of ingest station")
+@click.option('--device', help="The device name corresponding to the reader")
+@click.option('--ingest-state', default='idle', type=click.Choice(['idle', 'processing', 'processed', 'failed']),
+              help="The ingest state")
+@click.option('--mount-state', default='unmounted', type=click.Choice(['mounted', 'unmounted']),
+              help="The mount state of the USB device")
+@click.option('--mount', default='', help="The mount directory of the device")
+@click.option('--port', default='', help="The SAS port")
+@click.option('--message', default='', help="Message")
+def usb_reader_create(ctx, reader_id, host, device, ingest_state, mount_state, mount, port, message):
+    """Create a USB reader"""
+    client = get_dmsclient(ctx.config)
+    exist = False
+    try:
+        try:
+            client.usbreaders.delete(reader_id)
+        except DMSClientException:
+            # ignore if it does not exist
+            pass
+
+        usb_reader = USBReader(
+                        reader_id=reader_id,
+                        hostname=host,
+                        mount_state=mount_state,
+                        ingest_state=ingest_state,
+                        device=device,
+                        mount=mount,
+                        port=port,
+                        message=message)
+        client.usbreaders.create(usb_reader)
+
+        res = client.usbreaders.get(reader_id)
+        pprint.pprint(res.to_dict())
+    except DMSClientException as e:
+        print(e)
+        sys.exit(1)
+
+@cli.command()
+@click.pass_obj
+@click.option('--reader-id', required=True, help="Reader id of the data cartridge reader on ingest station")
+@click.option('--mount-state', type=click.Choice(['mounted', 'unmounted']), required=False)
+@click.option('--ingest-state', type=click.Choice(['idle', 'processing', 'processed', 'failed']), required=False)
+@click.option('--message', type=click.STRING, required=False)
+def usb_reader_update(ctx, reader_id, mount_state, ingest_state, message):
+    """ Update a cartridge reader: mount_state, ingest_state, message"""
+
+    try:
+        client = get_dmsclient(ctx.config)
+        if mount_state is not None:
+            client.usbreaders.set_mount_state(reader_id, mount_state)
+
+        if ingest_state is not None:
+            client.usbreaders.set_ingest_state(reader_id, ingest_state)
+
+        if message is not None:
+            client.usbreaders.set_message(reader_id, message)
+
+        reader = client.usbreaders.get(reader_id)
+        if reader.mount_state == 'unmounted' and reader.ingest_state == 'processed' and ingest_state is None:
+            client.usbreaders.set_ingest_state(reader_id, 'idle')
+
+        reader = client.usbreaders.get(reader_id)
+        pprint.pprint(reader.to_dict())
+    except DMSClientException as e:
+        print(str(e.message))
+        sys.exit(1)
+
+@cli.command()
+@click.pass_obj
+@click.option('--cartridge-id', required=True, help="The id of the data cartridge")
+@click.option('--device', help="The underlying device name of the cartridge")
+@click.option('--host', help="The hostname of ingest station")
+@click.option('--usage', type=click.FLOAT, help= "The amount (in GB) of the cartridge currently used")
+@click.option('--slot', default='', help="The slot/port the cartridge is plugged into on the ingest station")
+@click.option('--workflow_type', default='CAR', type=click.Choice(['CAR', 'FLC_INGEST', 'FLC_EGEST']),
+              help="The type of workflow (ingestion, sensor ingestion ")
+@click.option('--ingest-state', default='idle', type=click.Choice(['idle', 'processing', 'processed', 'failed']),
+              help="The ingest state")
+def cartridge_create(ctx, cartridge_id, device, host, usage, slot, workflow_type, ingest_state):
+    """Create a cartridge tracking object"""
+    client = get_dmsclient(ctx.config)
+    try:
+        try:
+            client.cartridges.delete(cartridge_id)
+        except DMSClientException:
+            # ignore if it does not exist
+            pass
+
+        cartridge = Cartridge(cartridge_id=cartridge_id,
+                        device=device,
+                        ingest_station=host,
+                        usage=usage,
+                        slot=slot,
+                        workflow_type=workflow_type,
+                        ingest_state=ingest_state)
+
+        client.cartridges.create(cartridge)
+
+        res = client.cartridges.get(cartridge_id)
+        pprint.pprint(res.to_dict())
+
+    except DMSClientException:
+        sys.exit(1)
+
+@cli.command()
+@click.pass_obj
+@click.option('--cartridge-id', required=True, help="The id of the data cartridge")
+@click.option('--workflow-type', default='CAR', required=False, type=click.Choice(['CAR', 'FLC_INGEST', 'FLC_EGEST']),
+              help="The type of workflow (ingestion, sensor ingestion ")
+@click.option('--ingest-state', default='idle', required=False, type=click.Choice(['idle', 'processing', 'processed', 'failed']),
+              help="The ingest state")
+@click.option('--usage', required=False, type=click.FLOAT, help="The amount (in GB) of the cartridge currently used")
+def cartridge_update(ctx, cartridge_id, workflow_type, ingest_state, usage):
+    """ Update a cartridge tracking object: workflow_type, ingest_state, usage"""
+
+    try:
+        client = get_dmsclient(ctx.config)
+        if workflow_type is not None:
+            client.cartridges.set_workflow_type(cartridge_id, workflow_type)
+
+        if ingest_state is not None:
+            client.cartridges.set_ingest_state(cartridge_id, ingest_state)
+
+        if usage is not None:
+            client.cartridges.set_usage(cartridge_id, usage)
+
+        cartridge = client.cartridges.get(cartridge_id)
+        pprint.pprint(cartridge.to_dict())
+    except DMSClientException as e:
+        print(str(e.message))
+        sys.exit(1)
+
+# re-ingest manually
+@cli.command()
+@click.pass_obj
+@click.argument('action', type=click.Choice(['add', 'remove']))
+@click.argument('device', type=click.STRING)
+def device_ingest(ctx, action, device):
+    """Simulate udev add/remove actions to trigger ingestions       
+  
+    \b
+    <ACTION> Action: add or remove
+    <DEVICE> The device name, e.g., /dev/md123
+    """
+    config_file = ctx.config_file
+    os.environ['ACTION'] = action
+    os.environ['DEVNAME'] = device
+    ingest_script = 'ingest-device.sh'
+    try:
+        subprocess.call([ingest_script, 'dispatch', config_file])
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
+
+# erase data cartridge
+@cli.command()
+@click.pass_obj
+@click.argument('device', type=click.STRING)
+def device_format(ctx, device):
+    """Format the data cartridge for better writing performance.
+
+    \b
+    <DEVICE> The device name, e.g., /dev/md123
+    """
+    config = ctx.config
+    auto_trim = False
+    if config.has_option('station_config', 'auto_trim'):
+        auto_trim = config.getboolean('station_config', 'auto_trim')
+
+    if click.confirm('This action will erase all the data on ' + device + '. Do you want to continue?', abort=True):
+        if auto_trim:
+            discard_cmd = "mdadm -D {} | grep \"/dev/sd[a-z]\" | awk \'{{print $7}}\' | xargs -P 4 -n 1 blkdiscard ".format(
+                device)
+            print("blkdiscard: {}".format(discard_cmd))
+            stdout, stderr, code = run_script(discard_cmd)
+            if code:
+                print(stdout, stderr)
+                sys.exit(code)
+
+        # Notes from ViGem vendor: 
+        # The "nodiscard" option is only given to speed up the formatting process.
+        # The volume must be created using "mkfs.ext4 -E [...],discard" when "blkdiscard"
+        # commands were skipped
+        format_cmd = "mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0,discard " + device
+        print("formatting: {}".format(format_cmd))
+        stdout, stedrr, code = run_script(format_cmd)
+        if code:
+            print(stdout, stedrr)
+            sys.exit(code)
+
+
+# ingest from local directory
+@cli.command()
+@click.pass_obj
+@click.argument('action', type=click.Choice(['add', 'remove']))
+@click.argument('datadir', type=click.STRING)
+def datadir_ingest(ctx, action, datadir):
+    """Ingest drive data stored on local directory       
+  
+    \b
+    <ACTION>  Action: add or remove.
+    <DATADIR> The directory where the drive data are stored.
+    """
+    config_file = ctx.config_file
+    os.environ['ACTION'] = action
+    os.environ['DATADIR'] = datadir
+    ingest_script = 'ingest-local.sh'
+    try:
+        subprocess.call([ingest_script, 'dispatch', config_file])
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
+
+
+# stop running ingestion
+@cli.command()
+@click.pass_obj
+@click.argument('device', type=click.STRING)
+def ingest_stop(ctx, device):
+    """Stop running ingestions...
+
+    \b
+    <DEVICE> The device the ingestion is taking data from, e.g., /dev/md127
+    """
+    config_file = ctx.config_file
+    print('Stop following processes')
+    py_proc = 'ps -aef | grep python3 | grep -v dms_utils | grep ' + device
+    print(subprocess.getoutput(py_proc))
+    pycmd = 'ps -aef | grep python3 | grep -v dms_utils | grep ' + device + '/ | awk \'{print $2}\' | xargs -r kill -INT'
+    try:
+        print(subprocess.getoutput(pycmd))
+    except Exception as e:
+        print(str(e))
+
+    rsync_proc = 'ps -aef | grep rsync | grep -v grep | grep ' + device + '/'
+    print(subprocess.getoutput(rsync_proc))
+    rsync = 'ps -aef | grep rsync | grep -v grep | grep ' + device + '/ | awk \'{print $2}\' | xargs -r kill -9'
+    try:
+        print(subprocess.getoutput(rsync))
+    except Exception as e:
+        print(str(e))
+
+        # un-mount device
+        # mount = 'mount | grep \"' + device +' on \" | awk \'{print $3}\''
+        # mount_dir = subprocess.getoutput(mount)
+        # if mount_dir:
+        #    # wait for 2 minute for the mount to be release
+        #    i = 0
+        #    while i < 24:
+        #        output = subprocess.getoutput('umount ' + mount_dir)
+        #        print(output)
+        #        if not output or 'not mounted' in output or 'not found' in output:
+        #            print('umount ' + mount_dir)
+        #            break
+        #        else:
+        #            print('Waiting for the mount point to be released...')
+        #            i = i + 1
+        #            time.sleep(5)
+
+
+def scan_drive(drive_path):
+    if os.path.isdir(drive_path):
+        files = os.listdir(drive_path)
+        dir_size = sum(
+            os.path.getsize(os.path.join(drive_path, f)) for f in files if os.path.isfile(os.path.join(drive_path, f)))
+        dir_count = len(files)
+        files_hash = hashlib.md5(str(sorted(files)).encode('utf-8', 'ignore')).hexdigest()
+        return [dir_size, dir_count, files_hash]
+    else:
+        return [-1, -1, -1]
+
+
+def scan_dir(mount_dir):
+    dirs = {}
+    for dir_name in os.listdir(mount_dir):
+        m = re.match(Drive.INGEST_REGEX, dir_name)
+        if m:
+            drive_path = os.path.join(mount_dir, dir_name)
+            dirs[dir_name] = scan_drive(drive_path)
+    return dirs
+
+
+# Verify data on cluster with data on device
+@cli.command()
+@click.pass_obj
+@click.argument('mount', type=click.STRING)
+@click.option('-v', '--verbose', count=True, help="Show details of source/target directories")
+def ingest_verify(ctx, mount, verbose):
+    """Verify data on Isilon clusters with data on device.
+
+    \b
+    <MOUNT> The mount point of md device, e.g., /volvo/dev/md123
+    """
+    client = get_dmsclient(ctx.config)
+    drives = scan_dir(mount)
+    if len(drives) == 0:
+        print('No drive found in %s.' % (mount,))
+        sys.exit(11)
+
+    verified_drive_count = 0
+    for key in drives:
+        drive_stat_on_device = drives[key]
+        drive_path_on_device = os.path.join(mount, key)
+        try:
+            drive_doc = client.drives.get(key).to_dict()
+            drive_path_on_cluster = drive_doc['target_path']
+            drive_stat_on_cluster = scan_drive(drive_path_on_cluster)
+
+            # verify all the files on device are on the cluster. Note that
+            # rsync may leave temp files on cluster if it is interrupted.
+            comp = dircmp(drive_path_on_device, drive_path_on_cluster)
+            files_on_device = sorted(comp.left_list)
+            common_files = sorted(comp.common)            
+            if files_on_device == common_files:
+                verified_drive_count += 1
+                if verbose:
+                    print('Drive: %s' % (key))
+                    print('On device:  %s; size: %d; files: %d;' % (
+                    drive_path_on_device, drive_stat_on_device[0], drive_stat_on_device[1]))
+                    print('On cluster: %s; size: %d; files: %d;' % (
+                    drive_path_on_cluster, drive_stat_on_cluster[0], drive_stat_on_cluster[1]))
+            else:
+                print('Drive: %s' % (key))
+                print('On device:  %s; size: %d; files: %d;' % (
+                drive_path_on_device, drive_stat_on_device[0], drive_stat_on_device[1]))
+                print('On cluster: %s; size: %d; files: %d;' % (
+                drive_path_on_cluster, drive_stat_on_cluster[0], drive_stat_on_cluster[1]))
+                break
+
+        except DMSClientException as e:
+            print('Drive: %s not found in DMS.' % (key,))
+
+    if verified_drive_count != len(drives):
+        print("Verification failed!")
+        sys.exit(12)
+    else:
+        print("Verification succeeded")
+
+
+# create journal
+@cli.command()
+@click.pass_obj
+@click.option('--extra', '-e', multiple=True)
+@click.argument('log-level', type=click.Choice([logging.getLevelName(logging.INFO),
+                                                logging.getLevelName(logging.WARNING),
+                                                logging.getLevelName(logging.ERROR),
+                                                logging.getLevelName(logging.CRITICAL),
+                                                logging.getLevelName(logging.DEBUG)]))
+@click.argument('station', type=click.STRING)
+@click.argument('context', type=click.STRING)
+@click.argument('message', type=click.STRING, default='')
+def journal_create(ctx, extra, log_level, station, context, message):
+    """ Create a journal entry for ingestion log
+
+    \b
+    <LOG_LEVEL>  Log level: INFO, WARNING, ERROR, CRITICAL, DEBUG
+    <STATION>    Hostname of ingest station
+    <CONTEXT>    Context of journal entry, e.g., udev_script, drive_processing
+    <MESSAGE>    Log message
+    """
+
+    fields = {}
+    for x in extra:
+        item = x.split('=')
+        fields[item[0]] = item[1]
+
+    client = get_dmsclient(ctx.config)
+    journal = Journal(log_level,
+                      station,
+                      context,
+                      message,
+                      **fields)
+    client.journals.create(journal)
+
+
+# list drive in copied state
+@cli.command()
+@click.pass_obj
+@click.option('--state', default='copied', type=click.Choice(
+    ['copied', 'copying', 'copy_failed', 'processing', 'processing_failed', 'processed', 'verified', 'keep',
+     'deleted']), help="The state of drive")
+def drive_list(ctx, state):
+    """List drives in specified state"""
+    fields = {'state': state}
+    client = get_dmsclient(ctx.config)
+    for d in client.drives.find_by_fields(**fields):
+        pprint.pprint(d.to_dict())
+
+
+# sample command to simulate creation of segment from drives in "copied" state.
+# a segment is created for each .vpcap file
+@cli.command()
+@click.pass_obj
+@click.option('--drive-id', type=click.STRING, required=True, help="The drive ID")
+def segment_create(ctx, drive_id):
+    """Create segments for specified drive"""
+    client = get_dmsclient(ctx.config)
+    try:
+        drive = client.drives.get(drive_id)
+    except DMSClientException as e:
+        if e.status_code == 404:
+            print("Drive not found")
+            return
+        else:
+            print(e)
+            return
+
+    if drive.state != 'copied':
+        print("Drive not in 'copied' state")
+        return
+
+    drive_path = drive.target_path
+    files = [f for f in os.listdir(drive_path) if os.path.isfile(os.path.join(drive_path, f))]
+    sequence = 0
+    for filename in files:
+        sequence += 1
+        segment_id, _ = os.path.splitext(filename)
+        try:
+            print("Creating segment '%s' (sequence: %d)" % (segment_id, sequence))
+            client.segments.create_from_drive(segment_id, sequence, drive)
+        except Exception as e:
+            print(e)
+
+
+# get segments of a drive
+@cli.command()
+@click.pass_obj
+@click.option('--drive-id', type=click.STRING, required=True, help="The drive ID")
+@click.option('--state', type=click.Choice(['created', 'started', 'completed', 'failed', 'deleted']),
+              help="The state of segment")
+def segment_list(ctx, drive_id, state):
+    """List segments for specified drive"""
+    fields = {'drive_id': drive_id}
+    if state:
+        fields['state'] = state
+
+    client = get_dmsclient(ctx.config)
+    for s in client.segments.find_by_fields(**fields):
+        pprint.pprint(s.to_dict())
+
+
+# delete all segments in a drive
+@cli.command()
+@click.pass_obj
+@click.option('--drive-id', type=click.STRING, required=True, help="The drive ID")
+def segment_delete(ctx, drive_id):
+    """Delete all segment in a drive"""
+    client = get_dmsclient(ctx.config)
+    client.segments.delete_by_drive_id(drive_id)
+
+
+# create templates
+@cli.command()
+@click.pass_obj
+def template_create(ctx):
+    """Create templates"""
+    client = get_dmsclient(ctx.config)
+    logging.basicConfig(level=logging.INFO)
+    try:
+        client.create_templates()
+        client.verify_templates()
+    except DMSClientException as e:
+        print(str(e.message))
+        sys.exit(1)
+
+
+# verify templates
+@cli.command()
+@click.pass_obj
+def template_verify(ctx):
+    """Verify templates"""
+    client = get_dmsclient(ctx.config)
+    logging.basicConfig(level=logging.INFO)
+    try:
+        client.verify_templates()
+    except DMSClientException as e:
+        print(str(e.message))
+        sys.exit(1)
+
+
+@cli.command()
+@click.pass_obj
+@click.option('--tag', '-t', multiple=True)
+@click.option('--drive-id', type=click.STRING, required=True, help="The drive ID")
+def drive_tags_add(ctx, drive_id, tag):
+    """Add one or more tags to a drive. Multiple tags can be specified, e.g., -t tag1 -t tag2"""
+    tags = list(tag)
+    client = get_dmsclient(ctx.config)
+    try:
+        client.drives.add_tags(drive_id, tags)
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
+
+
+@cli.command()
+@click.pass_obj
+def clean_all(ctx):
+    """Remove all documents, indices, and templates"""
+    client = get_dmsclient(ctx.config)
+    logging.basicConfig(level=logging.INFO)
+    try:
+        for name, mapping in MAPPINGS.items():
+            client.elasticsearch.indices.delete_template(name, ignore=404)
+            client.elasticsearch.indices.delete(mapping['template'], ignore=404)
+    except DMSClientException as e:
+        print(str(e.message))
+        sys.exit(1)
+
+@cli.command()
+@click.pass_obj
+@click.option('--cluster-id', type=click.STRING, required=True, help="The cluster ID")
+def get_logs_target_cluster(ctx, cluster_id):
+    """Returns the path on the cluster where the logs are to be stored"""
+    client = get_dmsclient(ctx.config)
+    isilon_path = ""
+
+    try:
+        cluster = client.clusters.get(cluster_id)
+        isilon_path = cluster.raw_mount
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
+
+    print(isilon_path)
+
+
+if __name__ == '__main__':
+    cli()

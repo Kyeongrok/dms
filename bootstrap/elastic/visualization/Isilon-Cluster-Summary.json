@@ -1,0 +1,11 @@
+  {
+      "title": "Isilon Cluster Summary",
+      "visState": "{\"title\":\"Isilon Cluster Summary\",\"type\":\"table\",\"params\":{\"perPage\":5,\"showPartialRows\":false,\"showMeticsAtAllLevels\":false,\"sort\":{\"columnIndex\":null,\"direction\":null},\"showTotal\":false,\"totalFunc\":\"sum\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"updated_at\",\"customLabel\":\"Last Updated\"}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"cluster_id\",\"size\":5,\"order\":\"asc\",\"orderBy\":\"1\",\"customLabel\":\"Isilon Cluster\"}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"available\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Available\"}},{\"id\":\"4\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"weight\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"Weight\"}},{\"id\":\"5\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"nfs_host\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"NFS Host\"}},{\"id\":\"6\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"smb_host\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\",\"customLabel\":\"SMB Host\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":null,\"direction\":null}}}}",
+      "description": "",
+      "savedSearchId": "isilon-cluster-configuration",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+  }

@@ -1,0 +1,19 @@
+{
+    "title" : "navigation",
+    "fields" : "[
+        {\"name\":\"category\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"link\",\"type\":\"string\",\"count\":0,\"scripted\":true,\"script\":\"'/app/kibana#/' + doc['navigation'].value + '/' + doc['path'].value + '/?_g=(' + doc['refresh'].value + ',' + doc['time_range'].value + ')'\",\"lang\":\"painless\",\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"navigation\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"order\",\"type\":\"number\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"path\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"time_range\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":true,\"analyzed\":false,\"doc_values\":true,\"searchable\":true,\"aggregatable\":true},
+        {\"name\":\"_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"indexed\":false,\"analyzed\":false,\"doc_values\":false,\"searchable\":true,\"aggregatable\":true}
+    ]",
+
+    "fieldFormatMap" : "{
+        \"link\":{\"id\":\"url\",\"params\":{\"urlTemplate\":\"{{ rawValue }}\",\"labelTemplate\":\"link\"}}
+    }"
+}
+
+
+

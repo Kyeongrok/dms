@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: elasticsearch:5.6.4
+    restart: always
+    ports:
+      - 9200:9200
+    # map elastic db to volume with large disk space
+    volumes:
+      - /mnt/elasticsearch/:/usr/share/elasticsearch/data/
+    # set heap size to half of the available memory
+    environment:
+      ES_JAVA_OPTS: "-Xms4g -Xmx4g "
+    networks:
+      - docker_elastic
+
+  kibana:
+    image: kibana:5.6.4
+    restart: always
+    volumes:
+      - ./kibana/config/kibana.yml:/etc/kibana/kibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      - docker_elastic
+
+networks:
+  docker_elastic:
+    driver: bridge
