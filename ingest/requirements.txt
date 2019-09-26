@@ -3,5 +3,5 @@ click==6.7
 uhashring==0.7
 click-configfile==0.2.2
 retrying==1.3.3
-PyYaml==3.12
+PyYaml==5.1
 psutil==5.4.1
